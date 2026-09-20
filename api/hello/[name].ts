@@ -1,11 +1,13 @@
-export default async function handler(req: Request): Promise<Response> {
-  // `req.url` may be absolute or relative depending on the deployment runtime,
-  // so provide a base to guarantee `new URL(...)` never throws.
-  const url = new URL(req.url, "http://localhost");
-  const segments = url.pathname.split("/").filter(Boolean);
-  const name = decodeURIComponent(segments[segments.length - 1] ?? "world");
+// Vercel serverless function (Node.js runtime) for the dynamic `/api/hello/:name` route.
+// Vercel passes path parameters in `req.query` for the `[name].ts` file convention.
+export default function handler(req: any, res: any) {
+  const { name } = req.query ?? {};
 
-  return Response.json({
-    message: `Hello, ${name}!`,
-  });
+  res.setHeader("Content-Type", "application/json");
+  res.statusCode = 200;
+  res.end(
+    JSON.stringify({
+      message: `Hello, ${name ?? "world"}!`,
+    }),
+  );
 }
